@@ -1,0 +1,7 @@
+.ant-input-group-addon{
+    border: 0 !important;
+    background: transparent !important;
+}
+.ant-input-suffix{
+    background:none !important;
+}
