@@ -214,7 +214,7 @@ const FormComponent = () => {
               label={t("form.firstname")}
               rules={[{ required: true }]}
             >
-              <Input />
+              <Input placeholder={t("form.firstname")} />
             </Form.Item>
           </Col>
           <Col md={10}>
@@ -223,7 +223,7 @@ const FormComponent = () => {
               label={t("form.lastname")}
               rules={[{ required: true }]}
             >
-              <Input />
+              <Input placeholder={t("form.lastname")} />
             </Form.Item>
           </Col>
         </Row>
@@ -234,7 +234,10 @@ const FormComponent = () => {
               label={t("form.birthday")}
               rules={[{ required: true }]}
             >
-              <DatePicker onChange={handleDateChange} />
+              <DatePicker
+                placeholder={t("form.date")}
+                onChange={handleDateChange}
+              />
             </Form.Item>
           </Col>
           <Col md={10}>
@@ -350,7 +353,7 @@ const FormComponent = () => {
         <Row>
           <Col md={8}>
             <Form.Item label={t("form.passport_No")} name="passportno">
-              <Input />
+              <Input placeholder={t("form.passport_No")} />
             </Form.Item>
           </Col>
         </Row>
@@ -361,7 +364,7 @@ const FormComponent = () => {
               name="salary"
               rules={[{ required: true }]}
             >
-              <Input />
+              <Input placeholder={t("form.epSalary")} />
             </Form.Item>
           </Col>
           <Col md={8} style={{ textAlign: "center" }}>

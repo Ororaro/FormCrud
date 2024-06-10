@@ -38,7 +38,8 @@ i18n
             thai: 'Thai',
             french: 'French',
             american: 'American',
-            selectnation: 'Please Select'
+            selectnation: 'Please Select',
+            date: 'YYYY/MM/DD',
           },
           table: {
             name: 'Name',
@@ -56,8 +57,8 @@ i18n
           form: {
             formTable:'การจัดการหน้าฟอร์ม',
             title: 'คำนำหน้า',
-            firstName: 'ชื่อจริง',
-            lastName: 'นามสกุล',
+            firstname: 'ชื่อจริง',
+            lastname: 'นามสกุล',
             birthday: 'วันเกิด',
             nationality: 'สัญชาติ',
             citizenID: 'เลขบัตรประชาชน ',
@@ -77,7 +78,8 @@ i18n
             thai: 'ไทย',
             french: 'ฝรั่งเศส',
             american: 'อเมริกัน',
-            selectnation: 'กรุณาเลือก'
+            selectnation: 'กรุณาเลือก',
+            date: 'ปี/เดือน/วัน'
           },
           table: {
             name: 'ชื่อ',
