@@ -1,4 +1,13 @@
-import { Button, Col, Form, Input, Row, Select } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Row,
+  Select,
+} from "antd";
 import TableComponent from "../table/table";
 import { DatePicker } from "antd";
 import {
@@ -7,27 +16,56 @@ import {
   KeyboardEvent as ReactKeyboardEvent,
   useEffect,
 } from "react";
-import { Checkbox } from "antd";
 import "./form.css";
 import { useDispatch } from "react-redux";
 import { addUser, editUser } from "../../store/list-slice";
 import dayjs, { Dayjs } from "dayjs";
 import { useSelector } from "react-redux";
-import { CheckboxChangeEvent } from "antd/es/checkbox";
 import { useTranslation } from "react-i18next";
+import { RootState } from "../../store";
 const { Option } = Select;
 
 interface FormValues {
   date: Dayjs | null;
+  title: string;
+  firstname: string;
+  lastname: string;
+  birthday: Dayjs | null;
+  nationality: string;
+  citizenID: string;
+  gender: string;
+  phonelang: string;
+  phone: string;
+  passportno: string;
+  salary: string;
+}
+
+interface User {
+  id: string;
+  data: {
+    title: string;
+    firstname: string;
+    lastname: string;
+    birthday: string;
+    nationality: string;
+    citizenID: string;
+    gender: string;
+    phonelang: string;
+    phone: string;
+    passportno: string;
+    salary: string;
+  };
 }
 const FormComponent = () => {
   const { t, i18n } = useTranslation();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const updateUser = useSelector((state: any) => state.counter.updateUser);
+  const updateUser = useSelector(
+    (state: RootState) => state.counter.updateUser
+  ) as User[];
 
   const [idNumber, setIdNumber] = useState<string[]>(new Array(5).fill(""));
-  const [selectedGender, setSelectedGender] = useState<any[]>([]);
+  const [selectedGender, setSelectedGender] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>();
   const [currentId, setCurrentId] = useState<string>("");
 
@@ -60,24 +98,17 @@ const FormComponent = () => {
     } else {
       form.resetFields();
       setIdNumber(new Array(5).fill(""));
-      setSelectedGender([]);
+      setSelectedGender("");
       setCurrentId("");
     }
   }, [updateUser]);
-
-  useEffect(() => {
-    form.setFieldsValue({
-      gender: [t("form.mr"), t("form.mrs"), t("form.ms")],
-    });
-    console.log('test lang=>>')
-  }, [form, t]);
 
   useEffect(() => {
     onReset();
   }, []);
 
   const splitCitizenID = (citizenID: string) => {
-    const parts = [];
+    const parts: string[] = [];
     parts?.push(citizenID?.slice(0, 1));
     parts?.push(citizenID?.slice(1, 5));
     parts?.push(citizenID?.slice(5, 10));
@@ -116,11 +147,11 @@ const FormComponent = () => {
   const onReset = () => {
     form.resetFields();
     setIdNumber(new Array(5).fill(""));
-    setSelectedGender([]);
+    setSelectedGender("");
     localStorage.removeItem("updateList");
   };
 
-  const handleGenderChange = (e: any) => {
+  const handleGenderChange = (e: RadioChangeEvent) => {
     setSelectedGender(e?.target?.value);
   };
 
@@ -244,14 +275,11 @@ const FormComponent = () => {
               label={t("form.gender")}
               rules={[{ required: true }]}
             >
-              <Checkbox.Group
-                onChange={handleGenderChange}
-                value={selectedGender}
-              >
-                <Checkbox value="male">{t("form.male")}</Checkbox>
-                <Checkbox value="female">{t("form.female")}</Checkbox>
-                <Checkbox value="unsex">{t("form.unsex")}</Checkbox>
-              </Checkbox.Group>
+              <Radio.Group onChange={handleGenderChange} value={selectedGender}>
+                <Radio value="male">{t("form.male")}</Radio>
+                <Radio value="female">{t("form.female")}</Radio>
+                <Radio value="unsex">{t("form.unsex")}</Radio>
+              </Radio.Group>
             </Form.Item>
           </Col>
         </Row>

@@ -47,30 +47,22 @@ const TableComponent = () => {
     setCheckSelectAll(false);
   };
 
-  // const data = userList.map((user) => ({
-  //   key: user.id,
-  //   name: `${user.data.firstname} ${user.data.lastname}`,
-  //   gender: user.data.gender,
-  //   phone: `${user.data.phonelang} ${user.data.phone}`,
-  //   nationality: user.data.nationality,
-  //   id: user.id,
-  // }));
   const data = userList.map((user) => {
     let gender: string = "";
     let nationality: string = "";
     switch (i18n.language) {
       case "en":
-        if (user.data.gender[0] === "male") gender = "Male";
-        if (user.data.gender[0] === "female") gender = "Female";
-        if (user.data.gender[0] === "unsex") gender = "Unsex";
+        if (user.data.gender === "male") gender = "Male";
+        if (user.data.gender === "female") gender = "Female";
+        if (user.data.gender === "unsex") gender = "Unsex";
         if (user.data.nationality === "Thai") nationality = "Thai";
         if (user.data.nationality === "French") nationality = "French";
         if (user.data.nationality === "American") nationality = "American";
         break;
       case "th":
-        if (user.data.gender[0] === "male") gender = "ผู้ชาย";
-        if (user.data.gender[0] === "female") gender = "ผู้หญิง";
-        if (user.data.gender[0] === "unsex") gender = "ไม่ระบุ";
+        if (user.data.gender === "male") gender = "ผู้ชาย";
+        if (user.data.gender === "female") gender = "ผู้หญิง";
+        if (user.data.gender === "unsex") gender = "ไม่ระบุ";
         if (user.data.nationality === "Thai") nationality = "ไทย";
         if (user.data.nationality === "French") nationality = "ฝรั่งเศส";
         if (user.data.nationality === "American") nationality = "อเมริกัน";
@@ -78,9 +70,6 @@ const TableComponent = () => {
       default:
         break;
     }
-    console.log('user.data.nationality === "Thai"',user.data.nationality === "Thai")
-    console.log('user.data.nationality',user.data.nationality)
-
     return {
       key: user.id,
       name: `${user.data.firstname} ${user.data.lastname}`,
