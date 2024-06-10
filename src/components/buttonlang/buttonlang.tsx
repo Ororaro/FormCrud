@@ -13,7 +13,6 @@ const Buttonlang = () => {
 
   useEffect(() => {
     i18n.changeLanguage(lang);
-    console.log("lang", lang);
   }, [lang]);
 
   return (

@@ -10,26 +10,24 @@ import {
 import { Checkbox } from "antd";
 import "./form.css";
 import { useDispatch } from "react-redux";
-import { addUser, editUser } from "../../store/cart-slice";
-import moment, { Moment } from "moment";
+import { addUser, editUser } from "../../store/list-slice";
 import dayjs, { Dayjs } from "dayjs";
 import { useSelector } from "react-redux";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
-
+import { useTranslation } from "react-i18next";
 const { Option } = Select;
-
-const plainOptions = ["Male", "Female", "Unsex"];
 
 interface FormValues {
   date: Dayjs | null;
 }
 const FormComponent = () => {
+  const { t, i18n } = useTranslation();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const updateUser = useSelector((state: any) => state.counter.updateUser);
 
   const [idNumber, setIdNumber] = useState<string[]>(new Array(5).fill(""));
-  const [selectedGender, setSelectedGender] = useState<string>("");
+  const [selectedGender, setSelectedGender] = useState<any[]>([]);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>();
   const [currentId, setCurrentId] = useState<string>("");
 
@@ -41,67 +39,89 @@ const FormComponent = () => {
   }, [form, idNumber]);
 
   useEffect(() => {
-    const citizenIDParts = splitCitizenID(updateUser[0].data.citizenID);
-    setCurrentId(updateUser[0]?.id);
-    setSelectedGender(updateUser[0].data.gender);
-    setIdNumber(citizenIDParts);
-    form.setFieldsValue({
-      title: updateUser[0]?.data?.title,
-      firstname: updateUser[0]?.data?.firstname,
-      lastname: updateUser[0]?.data?.lastname,
-      birthday: dayjs(updateUser[0]?.data?.birthday),
-      nationality: updateUser[0]?.data?.nationality,
-      citizenID: updateUser[0]?.data?.citizenID,
-      gender: updateUser[0]?.data?.gender,
-      phonelang: updateUser[0]?.data?.phonelang,
-      phone: updateUser[0]?.data?.phone,
-      passportno: updateUser[0]?.data?.passportno,
-      salary: updateUser[0]?.data?.salary,
-    });
+    if (updateUser && updateUser.length > 0) {
+      const citizenIDParts = splitCitizenID(updateUser[0].data.citizenID);
+      setCurrentId(updateUser[0]?.id);
+      setSelectedGender(updateUser[0].data.gender);
+      setIdNumber(citizenIDParts);
+      form.setFieldsValue({
+        title: updateUser[0]?.data?.title,
+        firstname: updateUser[0]?.data?.firstname,
+        lastname: updateUser[0]?.data?.lastname,
+        birthday: dayjs(updateUser[0]?.data?.birthday),
+        nationality: updateUser[0]?.data?.nationality,
+        citizenID: updateUser[0]?.data?.citizenID,
+        gender: updateUser[0]?.data?.gender,
+        phonelang: updateUser[0]?.data?.phonelang,
+        phone: updateUser[0]?.data?.phone,
+        passportno: updateUser[0]?.data?.passportno,
+        salary: updateUser[0]?.data?.salary,
+      });
+    } else {
+      form.resetFields();
+      setIdNumber(new Array(5).fill(""));
+      setSelectedGender([]);
+      setCurrentId("");
+    }
   }, [updateUser]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      gender: [t("form.mr"), t("form.mrs"), t("form.ms")],
+    });
+    console.log('test lang=>>')
+  }, [form, t]);
+
+  useEffect(() => {
+    onReset();
+  }, []);
 
   const splitCitizenID = (citizenID: string) => {
     const parts = [];
-    parts.push(citizenID.slice(0, 1));
-    parts.push(citizenID.slice(1, 5));
-    parts.push(citizenID.slice(5, 10));
-    parts.push(citizenID.slice(10, 12));
-    parts.push(citizenID.slice(12, 13));
+    parts?.push(citizenID?.slice(0, 1));
+    parts?.push(citizenID?.slice(1, 5));
+    parts?.push(citizenID?.slice(5, 10));
+    parts?.push(citizenID?.slice(10, 12));
+    parts?.push(citizenID?.slice(12, 13));
     return parts;
   };
 
   const onFinish = (values: FormValues) => {
     if (!localStorage.getItem("updateList")) {
-      console.log("addUser");
       dispatch(
-        addUser({ ...values, birthday: selectedDate?.format("YYYY-MM-DD") })
-      );
-      onReset()
-      alert("Save Success")
-    } else {
-      console.log("updateUser");
-      localStorage.removeItem("updateList");
-
-      dispatch(
-        editUser({
-          id: currentId,
+        addUser({
           ...values,
           birthday: selectedDate?.format("YYYY-MM-DD"),
         })
       );
-      onReset()
-      alert("Save Success")
+      onReset();
+      alert("Save Success");
+    } else {
+      localStorage.removeItem("updateList");
+      dispatch(
+        editUser({
+          id: currentId,
+          ...values,
+          data: {
+            ...values,
+            birthday: selectedDate?.format("YYYY-MM-DD"),
+          },
+        })
+      );
+      onReset();
+      alert("Save Success");
     }
   };
 
   const onReset = () => {
     form.resetFields();
     setIdNumber(new Array(5).fill(""));
-    setSelectedGender("");
+    setSelectedGender([]);
+    localStorage.removeItem("updateList");
   };
 
-  const handleGenderChange = (e: CheckboxChangeEvent) => {
-    setSelectedGender(e.target.value);
+  const handleGenderChange = (e: any) => {
+    setSelectedGender(e?.target?.value);
   };
 
   const handleChangeCitizen = (
@@ -146,22 +166,21 @@ const FormComponent = () => {
           <Col md={4}>
             <Form.Item
               name="title"
-              label="title"
+              label={t("form.title")}
               rules={[{ required: true }]}
               style={{ maxWidth: 200 }}
             >
-              <Select placeholder="title">
-                <Option value="Mr">Mr.</Option>
-                <Option value="Mrs">Mrs.</Option>
-                <Option value="Ms">Ms.</Option>
+              <Select placeholder={t("form.title")}>
+                <Option value="Mr">{t("form.mr")}</Option>
+                <Option value="Mrs">{t("form.mrs")}</Option>
+                <Option value="Ms">{t("form.ms")}</Option>
               </Select>
             </Form.Item>
           </Col>
-
           <Col md={10}>
             <Form.Item
               name="firstname"
-              label="Firstname"
+              label={t("form.firstname")}
               rules={[{ required: true }]}
             >
               <Input />
@@ -170,7 +189,7 @@ const FormComponent = () => {
           <Col md={10}>
             <Form.Item
               name="lastname"
-              label="lastname"
+              label={t("form.lastname")}
               rules={[{ required: true }]}
             >
               <Input />
@@ -181,7 +200,7 @@ const FormComponent = () => {
           <Col md={6}>
             <Form.Item
               name="birthday"
-              label="Birthday"
+              label={t("form.birthday")}
               rules={[{ required: true }]}
             >
               <DatePicker onChange={handleDateChange} />
@@ -190,20 +209,20 @@ const FormComponent = () => {
           <Col md={10}>
             <Form.Item
               name="nationality"
-              label="Nationality"
+              label={t("form.nationality")}
               rules={[{ required: true }]}
             >
-              <Select placeholder="Nationality" allowClear>
-                <Option value="Thai">Thai</Option>
-                <Option value="French">French</Option>
-                <Option value="American">American</Option>
+              <Select placeholder={t("form.selectnation")}>
+                <Option value="Thai">{t("form.thai")}</Option>
+                <Option value="French">{t("form.french")}</Option>
+                <Option value="American">{t("form.american")}</Option>
               </Select>
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col md={12}>
-            <Form.Item label="CitizenID" name="citizenID">
+            <Form.Item label={t("form.citizenID")} name="citizenID">
               <Row>
                 {idNumber.map((digit, index) => (
                   <Col span={4} key={index} style={{ marginRight: "10px" }}>
@@ -222,41 +241,72 @@ const FormComponent = () => {
           <Col md={24}>
             <Form.Item
               name="gender"
-              label="Gender"
+              label={t("form.gender")}
               rules={[{ required: true }]}
             >
-              <Row>
-                {plainOptions.map((item) => {
-                  return (
-                    <Col md={1.5}>
-                      <Checkbox
-                        onChange={handleGenderChange}
-                        checked={selectedGender === item}
-                        value={item}
-                      >
-                        {item}
-                      </Checkbox>
-                    </Col>
-                  );
-                })}
-              </Row>
+              <Checkbox.Group
+                onChange={handleGenderChange}
+                value={selectedGender}
+              >
+                <Checkbox value="male">{t("form.male")}</Checkbox>
+                <Checkbox value="female">{t("form.female")}</Checkbox>
+                <Checkbox value="unsex">{t("form.unsex")}</Checkbox>
+              </Checkbox.Group>
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col md={5}>
             <Form.Item
-              label="Mobile Phone"
               name="phonelang"
+              label={t("form.mobile_Phone")}
               rules={[{ required: true }]}
             >
               <Select style={{ width: 100 }}>
-                <Option value="86">+86</Option>
-                <Option value="87">+87</Option>
+                <Option value="+66">
+                  <div style={{ marginTop: "8px", display: "flex" }}>
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Flag_of_Thailand.svg/1599px-Flag_of_Thailand.svg.png"
+                      width="20px"
+                      height="20px"
+                      style={{ marginRight: "5px" }}
+                    ></img>
+                    <span>+66</span>
+                  </div>
+                </Option>
+                <Option value="+1">
+                  <div style={{ marginTop: "8px", display: "flex" }}>
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1600px-Flag_of_the_United_States.svg.png?20151118161041"
+                      width="20px"
+                      height="20px"
+                      style={{ marginRight: "5px" }}
+                    ></img>
+                    <span>+1</span>
+                  </div>
+                </Option>
+                <Option value="+33">
+                  <div style={{ marginTop: "8px", display: "flex" }}>
+                    <img
+                      src="https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/1599px-Flag_of_France.svg.png?20220120162234"
+                      width="20px"
+                      height="20px"
+                      style={{ marginRight: "5px" }}
+                    ></img>
+                    <span>+33</span>
+                  </div>
+                </Option>
               </Select>
             </Form.Item>
           </Col>
-          <Col md={1} style={{ margin: "5px" }}>
+          <Col
+            md={1}
+            style={
+              i18n.language === "en"
+                ? { marginLeft: "10px", margin: "5px" }
+                : { paddingLeft: "30px", margin: "5px 15px" }
+            }
+          >
             -
           </Col>
           <Col md={6}>
@@ -271,7 +321,7 @@ const FormComponent = () => {
         </Row>
         <Row>
           <Col md={8}>
-            <Form.Item label="Passport No" name="passportno">
+            <Form.Item label={t("form.passport_No")} name="passportno">
               <Input />
             </Form.Item>
           </Col>
@@ -279,7 +329,7 @@ const FormComponent = () => {
         <Row>
           <Col md={8}>
             <Form.Item
-              label="Expected Salary"
+              label={t("form.epSalary")}
               name="salary"
               rules={[{ required: true }]}
             >
@@ -289,15 +339,13 @@ const FormComponent = () => {
           <Col md={8} style={{ textAlign: "center" }}>
             <Form.Item>
               <Button htmlType="button" onClick={onReset}>
-                Reset
+                {t("form.reset")}
               </Button>
             </Form.Item>
           </Col>
           <Col md={8}>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
+              <Button htmlType="submit"> {t("form.submit")}</Button>
             </Form.Item>
           </Col>
         </Row>

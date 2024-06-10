@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Pagination,
-  Space,
-  Table,
-  TableColumnsType,
-  Tag,
-  Typography,
-} from "antd";
+import React, { useState } from "react";
+import { Button, Space, Table } from "antd";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { useDispatch } from "react-redux";
-import { deleteUser, updateUser } from "../../store/cart-slice";
+import { deleteUser, updateUser } from "../../store/list-slice";
 import { Checkbox } from "antd";
-
+import { useTranslation } from "react-i18next";
 interface User {
   id: string;
   data: {
@@ -26,15 +18,16 @@ interface User {
   };
 }
 const TableComponent = () => {
+  const { t, i18n } = useTranslation();
   const dispatch = useDispatch();
   const userList = useSelector(
     (state: RootState) => state.counter.users
   ) as unknown as User[];
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [checkSelectAll, setCheckSelectAll] = useState<boolean>(false);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys as string[]);
   };
 
   const rowSelection = {
@@ -54,68 +47,103 @@ const TableComponent = () => {
     setCheckSelectAll(false);
   };
 
-  const data = [];
-  for (let i = 0; i < userList.length; i++) {
-    data.push({
-      key: userList[i].id,
-      name: (
-        <Typography>
-          {userList[i]?.data?.firstname} {userList[i]?.data?.lastname}
-        </Typography>
-      ),
-      gender: <Typography>{userList[i]?.data?.gender}</Typography>,
-      phone: (
-        <Typography>
-          {userList[i]?.data?.phonelang}
-          {userList[i]?.data?.phone}
-        </Typography>
-      ),
-      nationality: <Typography>{userList[i]?.data?.nationality} </Typography>,
-      id: userList[i].id,
-    });
-  }
+  // const data = userList.map((user) => ({
+  //   key: user.id,
+  //   name: `${user.data.firstname} ${user.data.lastname}`,
+  //   gender: user.data.gender,
+  //   phone: `${user.data.phonelang} ${user.data.phone}`,
+  //   nationality: user.data.nationality,
+  //   id: user.id,
+  // }));
+  const data = userList.map((user) => {
+    let gender: string = "";
+    let nationality: string = "";
+    switch (i18n.language) {
+      case "en":
+        if (user.data.gender[0] === "male") gender = "Male";
+        if (user.data.gender[0] === "female") gender = "Female";
+        if (user.data.gender[0] === "unsex") gender = "Unsex";
+        if (user.data.nationality === "Thai") nationality = "Thai";
+        if (user.data.nationality === "French") nationality = "French";
+        if (user.data.nationality === "American") nationality = "American";
+        break;
+      case "th":
+        if (user.data.gender[0] === "male") gender = "ผู้ชาย";
+        if (user.data.gender[0] === "female") gender = "ผู้หญิง";
+        if (user.data.gender[0] === "unsex") gender = "ไม่ระบุ";
+        if (user.data.nationality === "Thai") nationality = "ไทย";
+        if (user.data.nationality === "French") nationality = "ฝรั่งเศส";
+        if (user.data.nationality === "American") nationality = "อเมริกัน";
+        break;
+      default:
+        break;
+    }
+    console.log('user.data.nationality === "Thai"',user.data.nationality === "Thai")
+    console.log('user.data.nationality',user.data.nationality)
+
+    return {
+      key: user.id,
+      name: `${user.data.firstname} ${user.data.lastname}`,
+      gender: gender,
+      phone: user?.data?.phonelang + user?.data?.phone,
+      nationality: nationality,
+      id: user.id,
+    };
+  });
 
   const columns = [
     {
-      title: "Name",
+      title: t("table.name"),
       dataIndex: "name",
       key: "name",
       sorter: (a: any, b: any) => a?.name?.localeCompare(b?.name),
     },
     {
-      title: "Gender",
+      title: t("table.gender"),
       dataIndex: "gender",
       key: "gender",
       sorter: (a: any, b: any) => a?.gender?.localeCompare(b?.gender),
     },
     {
-      title: "Mobile Phone",
+      title: t("table.mobile_Phone"),
       dataIndex: "phone",
       key: "phone",
       sorter: (a: any, b: any) => a?.phone?.localeCompare(b?.phone),
     },
     {
-      title: "Nationality",
+      title: t("table.nationality"),
       dataIndex: "nationality",
       key: "nationality",
       sorter: (a: any, b: any) => a?.nationality?.localeCompare(b?.nationality),
     },
     {
-      title: "Manage",
+      title: t("table.manage"),
       dataIndex: "",
       key: "x",
       render: (_: any, record: { id: any }) => (
         <Space size="middle">
-          <a onClick={() => dispatch(updateUser(record?.id))}>Edit</a>
-          <a onClick={() => dispatch(deleteUser(record?.id))}>Delete</a>
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() => dispatch(updateUser(record?.id))}
+          >
+            {t("table.edit")}
+          </span>
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              dispatch(deleteUser(record?.id), alert("Save Success"));
+            }}
+          >
+            {t("table.delete")}
+          </span>
         </Space>
       ),
     },
   ];
 
   const paginationConfig = {
-      next_page: "Next",
-      prev_page: "Prev",
+    next_page: "Next",
+    prev_page: "Prev",
   };
 
   return (
@@ -137,7 +165,7 @@ const TableComponent = () => {
         dataSource={data}
         pagination={{
           position: ["topRight"],
-          locale:paginationConfig
+          locale: paginationConfig,
         }}
       />
     </div>

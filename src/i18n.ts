@@ -17,8 +17,8 @@ i18n
           form: {
             formTable:'Form & Table',
             title: 'title',
-            firstName: 'Firstname',
-            lastName: 'lastName',
+            firstname: 'Firstname',
+            lastname: 'lastName',
             birthday: 'Birthday',
             nationality: 'Nationality',
             citizenID: 'CitizenID',
@@ -27,14 +27,27 @@ i18n
             passport_No: 'Passport No',
             epSalary: 'Expected Salary',
             reset: 'Reset',
-            submit: 'Submit'
+            submit: 'Submit',
+            male: 'Male',
+            female: 'Female',
+            unsex: 'Unsex',
+            home: 'Home',
+            mr:'Mr.',
+            mrs:'Mrs.',
+            ms:'Ms.',
+            thai: 'Thai',
+            french: 'French',
+            american: 'American',
+            selectnation: 'Please Select'
           },
           table: {
             name: 'Name',
             gender: 'Gender',
             mobile_Phone: 'Mobile Phone',
             nationality: 'Nationality',
-            manage: 'Manage'
+            manage: 'Manage',
+            edit: 'Edit',
+            delete: 'Delete',
           }
         }
       },
@@ -53,14 +66,27 @@ i18n
             passport_No: 'หนังสือเดินทาง',
             epSalary: 'เงินเดือนที่คาดหวัง',
             reset: 'ล้างข้อมูล',
-            submit: 'ส่งข้อมูล'
+            submit: 'ส่งข้อมูล',
+            male: 'ผู้ชาย',
+            female: 'ผู้หญิง',
+            unsex: 'ไม่ระบุ',
+            home: 'หน้าหลัก',
+            mr:'นาย.',
+            mrs:'นางสาว.',
+            ms:'นาง.',
+            thai: 'ไทย',
+            french: 'ฝรั่งเศส',
+            american: 'อเมริกัน',
+            selectnation: 'กรุณาเลือก'
           },
           table: {
             name: 'ชื่อ',
             gender: 'เพศ',
             mobile_Phone: 'เบอร์โทรศัพท์มือถือ',
             nationality: 'สัญชาติ',
-            manage: 'จัดการ'
+            manage: 'จัดการ',
+            edit: 'แก้ไขข้อมูล',
+            delete: 'ลบข้อมูล'
           }
         }
       }
