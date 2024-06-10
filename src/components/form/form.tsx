@@ -23,6 +23,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { RootState } from "../../store";
+import "../../App.css";
 const { Option } = Select;
 
 interface FormValues {
@@ -254,38 +255,43 @@ const FormComponent = () => {
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row className="citizen-id-input">
           <Col md={12}>
             <Form.Item label={t("form.citizenID")} name="citizenID">
               <Row>
                 {idNumber.map((digit, index) => (
                   <Col span={4} key={index} style={{ marginRight: "10px" }}>
-                    <Input
-                      id={`idNumber-${index}`}
-                      value={digit}
-                      maxLength={maxLengths[index]}
-                      onChange={(e) => handleChangeCitizen(e, index)}
-                      onKeyUp={(e) => handleKeyUp(e, index)}
-                    />
+                    <div className="dashofinput">
+                      <Input
+                        id={`idNumber-${index}`}
+                        value={digit}
+                        maxLength={maxLengths[index]}
+                        onChange={(e) => handleChangeCitizen(e, index)}
+                        onKeyUp={(e) => handleKeyUp(e, index)}
+                      />
+                      {index !== idNumber.length - 1 && (
+                        <span className="dash">-</span>
+                      )}
+                    </div>
                   </Col>
                 ))}
               </Row>
             </Form.Item>
           </Col>
-          <Col md={24}>
-            <Form.Item
-              name="gender"
-              label={t("form.gender")}
-              rules={[{ required: true }]}
-            >
-              <Radio.Group onChange={handleGenderChange} value={selectedGender}>
-                <Radio value="male">{t("form.male")}</Radio>
-                <Radio value="female">{t("form.female")}</Radio>
-                <Radio value="unsex">{t("form.unsex")}</Radio>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
         </Row>
+        <Col md={24}>
+          <Form.Item
+            name="gender"
+            label={t("form.gender")}
+            rules={[{ required: true }]}
+          >
+            <Radio.Group onChange={handleGenderChange} value={selectedGender}>
+              <Radio value="male">{t("form.male")}</Radio>
+              <Radio value="female">{t("form.female")}</Radio>
+              <Radio value="unsex">{t("form.unsex")}</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
         <Row>
           <Col md={5}>
             <Form.Item
